@@ -29,7 +29,7 @@
 | 画图分析 | YOLOv8 + 多模态大模型 |
 | RAG 知识库 | FAISS + BGE Embedding |
 | 大模型批改 | InternLM-Math API |
-| 前端界面 | Gradio / Streamlit |
+| 前端界面 | Vue 3 + TypeScript |
 
 ## 团队
 
@@ -44,7 +44,57 @@
 ## 项目文档
 
 - [项目章程](docs/PROJECT-CHARTER.md)
-- [产品 Backlog（作业 2）](docs/assignment2-产品Backlog.md)
+- [产品 Backlog](docs/backlog.md)
+- [Sprint 1 计划](docs/Sprint1-计划.md)
+- [Sprint 2 计划](docs/Sprint2-计划.md)
+- [Sprint 3 计划](docs/Sprint3-计划.md)
+- [API 文档](docs/API-文档.md)
+
+## 项目结构
+
+```
+physics-homework-grading/
+├── backend/                  # FastAPI 后端
+│   ├── main.py              # 入口
+│   ├── api/                 # API 路由
+│   ├── models/              # 数据模型
+│   ├── cv/                  # 图像处理模块
+│   ├── ai/                  # AI 模块
+│   ├── rag/                 # RAG 知识库
+│   ├── grader/              # 批改模块
+│   └── tests/              # 测试
+├── frontend/                 # Vue 3 前端
+│   ├── src/
+│   │   ├── views/          # 页面组件
+│   │   ├── components/     # 通用组件
+│   │   ├── stores/        # Pinia 状态
+│   │   └── router/        # 路由
+│   └── package.json
+├── shared/                  # 共享接口定义
+├── docs/                    # 项目文档
+├── .github/                 # GitHub Actions
+└── README.md
+```
+
+## 快速开始
+
+### 后端
+
+```bash
+cd backend
+pip install -r requirements.txt
+python main.py
+# 访问 http://localhost:8000/docs
+```
+
+### 前端
+
+```bash
+cd frontend
+npm install
+npm run dev
+# 访问 http://localhost:5173
+```
 
 ## 里程碑
 
