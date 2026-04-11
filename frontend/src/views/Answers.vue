@@ -5,12 +5,12 @@ import { getAnswers, createAnswer, updateAnswer, deleteAnswer } from '@/services
 import type { StandardAnswer, AnswerStep } from '@/types/api'
 
 const columns = [
-  { title: '题目', dataIndex: 'question_title', key: 'question_title' },
-  { title: '学科', dataIndex: 'subject', key: 'subject' },
-  { title: '年级', dataIndex: 'grade', key: 'grade' },
-  { title: '章节', dataIndex: 'chapter', key: 'chapter' },
-  { title: '总分', dataIndex: 'total_score', key: 'total_score', width: 80 },
-  { title: '操作', key: 'action', width: 120 },
+  { title: '题目', dataIndex: 'question_title', key: 'question_title', align: 'left' },
+  { title: '学科', dataIndex: 'subject', key: 'subject', align: 'center' },
+  { title: '年级', dataIndex: 'grade', key: 'grade', align: 'center' },
+  { title: '章节', dataIndex: 'chapter', key: 'chapter', align: 'center' },
+  { title: '总分', dataIndex: 'total_score', key: 'total_score', width: 80, align: 'center' },
+  { title: '操作', key: 'action', width: 120, align: 'center' },
 ]
 
 const data = ref<StandardAnswer[]>([])
@@ -435,7 +435,7 @@ onMounted(() => {
 }
 
 .custom-table :deep(.ant-table-tbody > tr > td) {
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-6);
 }
 
 .custom-table :deep(.ant-table-tbody > tr:hover > td) {
@@ -526,13 +526,13 @@ onMounted(() => {
 .steps-container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .step-item {
   display: flex;
-  gap: var(--space-4);
-  padding: var(--space-4);
+  gap: var(--space-5);
+  padding: var(--space-5);
   background: var(--bg-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -547,16 +547,18 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
-  min-width: 48px;
+  gap: var(--space-2);
+  min-width: 56px;
 }
 
 .step-number {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-full);
   background: var(--primary);
   color: white;
+  font-size: 0.9375rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -573,7 +575,7 @@ onMounted(() => {
 .step-fields {
   display: flex;
   flex: 1;
-  gap: var(--space-3);
+  gap: var(--space-4);
   align-items: flex-start;
 }
 

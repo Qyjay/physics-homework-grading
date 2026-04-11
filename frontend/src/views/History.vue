@@ -6,12 +6,12 @@ import { getHistory } from '@/services/api'
 const router = useRouter()
 
 const columns = [
-  { title: '批改ID', dataIndex: 'grading_id', key: 'grading_id' },
-  { title: '学生姓名', dataIndex: 'student_name', key: 'student_name' },
-  { title: '题目', dataIndex: 'question_title', key: 'question_title' },
-  { title: '得分', key: 'total_score', width: 100 },
-  { title: '批改时间', dataIndex: 'created_at', key: 'created_at' },
-  { title: '操作', key: 'action', width: 100 },
+  { title: '批改ID', dataIndex: 'grading_id', key: 'grading_id', align: 'center' },
+  { title: '学生姓名', dataIndex: 'student_name', key: 'student_name', align: 'center' },
+  { title: '题目', dataIndex: 'question_title', key: 'question_title', align: 'center' },
+  { title: '得分', key: 'total_score', width: 100, align: 'center' },
+  { title: '批改时间', dataIndex: 'created_at', key: 'created_at', align: 'center' },
+  { title: '操作', key: 'action', width: 100, align: 'center' },
 ]
 
 const data = ref<any[]>([])
@@ -149,7 +149,7 @@ function getScoreType(record: any): 'success' | 'warning' | 'error' {
 }
 
 .custom-table :deep(.ant-table-tbody > tr > td) {
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-6);
 }
 
 .custom-table :deep(.ant-table-tbody > tr:hover > td) {
@@ -160,8 +160,8 @@ function getScoreType(record: any): 'success' | 'warning' | 'error' {
 .score-cell {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: var(--space-1) var(--space-3);
+  gap: 4px;
+  padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   font-variant-numeric: tabular-nums;
 }

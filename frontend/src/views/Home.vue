@@ -583,11 +583,11 @@ function viewResult(item: any) {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-5);
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-2);
+  gap: var(--space-4);
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out-quart);
   text-align: left;
@@ -600,8 +600,8 @@ function viewResult(item: any) {
 }
 
 .quick-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
   background: color-mix(in oklch, var(--icon-color) 12%, transparent);
   display: flex;
@@ -614,12 +614,13 @@ function viewResult(item: any) {
 .quick-label {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.9375rem;
+  font-size: 1rem;
 }
 
 .quick-desc {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--text-tertiary);
+  line-height: 1.5;
 }
 
 /* 动画 */
