@@ -8,6 +8,11 @@ from typing import Optional, List
 from datetime import datetime
 import uuid
 from api.auth import get_current_user
+from fastapi import APIRouter, Depends
+# 导入你创建的公式识别函数
+from backend.ai.formula_recognizer import recognize_formula
+# 导入你的请求/响应模型（保持你原有定义）
+from ... import FormulaRequest, Response, get_current_user
 
 router = APIRouter()
 
@@ -122,29 +127,27 @@ async def recognize_text(
     )
 
 
+
+
 @router.post("/formula", response_model=Response)
 async def recognize_formula(
     request: FormulaRequest,
     current_user: dict = Depends(get_current_user)
 ):
     """公式识别"""
-    formula_regions = [
-        {
-            "region_id": "reg_002",
-            "latex": "F = m \\cdot a",
-            "bbox": {"x1": 100, "y1": 360, "x2": 500, "y2": 420},
-            "confidence": 0.89
-        }
-    ]
+    # 调用AI识别模块，替换原有模拟代码
+    data = recognize_formula(image_id=request.image_id)
 
     return Response(
         code=200,
         message="识别完成",
-        data={
-            "image_id": request.image_id,
-            "formula_regions": formula_regions
-        }
+        data=data
     )
+
+
+
+
+
 
 
 @router.post("/diagram", response_model=Response)
