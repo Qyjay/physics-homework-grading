@@ -9,6 +9,12 @@ from datetime import datetime
 import os
 import uuid
 from api.auth import get_current_user
+from cv.uploader import (
+    save_upload_file as cv_save_upload_file,
+    get_file_size as cv_get_file_size,
+    get_image_info as cv_get_image_info,
+)
+from cv.preprocessor import preprocess_pipeline
 
 router = APIRouter()
 
@@ -45,25 +51,19 @@ FAKE_IMAGES_DB = {}
 
 def save_upload_file(upload_file: UploadFile, destination: str) -> str:
     """保存上传文件"""
-    os.makedirs(os.path.dirname(destination), exist_ok=True)
-    with open(destination, "wb") as f:
-        content = upload_file.file.read()
-        f.write(content)
-    return destination
+    return cv_save_upload_file(upload_file, destination)
 
 
 def get_file_size(file_path: str) -> int:
     """获取文件大小"""
-    return os.path.getsize(file_path)
+    return cv_get_file_size(file_path)
 
 
 def get_image_dimensions(file_path: str) -> tuple:
     """获取图片尺寸"""
     try:
-        from PIL import Image
-        with Image.open(file_path) as img:
-            return img.size  # (width, height)
-    except:
+        return cv_get_image_info(file_path)
+    except Exception:
         return (0, 0)
 
 
@@ -144,25 +144,15 @@ async def preprocess_image(
 
     image_info = FAKE_IMAGES_DB[image_id]
 
-    # 模拟预处理操作
-    operations = [
-        {"type": "denoise", "params": {"method": "bilateral"}},
-        {"type": "deskew", "params": {"angle": -3.5}},
-        {"type": "perspective", "params": {}},
-        {"type": "normalize", "params": {"method": "CLAHE"}}
-    ]
-
     # 生成处理后的图片路径
     processed_filename = f"processed_{image_info['filename']}"
     processed_path = os.path.join(PROCESSED_DIR, processed_filename)
 
-    # 复制原图作为处理后的图（实际应该进行真实处理）
     original_path = os.path.join(UPLOAD_DIR, image_info["filename"])
-    if os.path.exists(original_path):
-        save_upload_file(
-            UploadFile(open(original_path, "rb")),
-            processed_path
-        )
+    if not os.path.exists(original_path):
+        raise HTTPException(status_code=404, detail="原始图片不存在")
+
+    result = preprocess_pipeline(original_path, processed_path)
 
     return ImageResponse(
         code=200,
@@ -170,6 +160,6 @@ async def preprocess_image(
         data={
             "image_id": image_id,
             "processed_url": f"/uploads/processed/{processed_filename}",
-            "operations": operations
+            "operations": result["operations"]
         }
     )

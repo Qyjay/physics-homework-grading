@@ -6,15 +6,25 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-import uuid
+import os
 from api.auth import get_current_user
-from fastapi import APIRouter, Depends
-# 导入你创建的公式识别函数
-from backend.ai.formula_recognizer import recognize_formula
-# 导入你的请求/响应模型（保持你原有定义）
-from ... import FormulaRequest, Response, get_current_user
+from ai.formula_recognizer import recognize_formula as ai_recognize_formula
+from cv.segmenter import segment_image, regions_to_dict
+from cv.ocr_engine import recognize_text as cv_recognize_text, results_to_dict
 
 router = APIRouter()
+
+
+def _resolve_image_path(image_id: str) -> str:
+    candidates = [
+        os.path.join("uploads", f"{image_id}.jpg"),
+        os.path.join("uploads", f"{image_id}.jpeg"),
+        os.path.join("uploads", f"{image_id}.png"),
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    raise HTTPException(status_code=404, detail=f"未找到图片文件: {image_id}")
 
 
 # ============== Pydantic Models ==============
@@ -70,27 +80,8 @@ async def segment_regions(
     current_user: dict = Depends(get_current_user)
 ):
     """图像区域分割"""
-    # 模拟分割结果
-    regions = [
-        {
-            "region_id": "reg_001",
-            "type": "text",
-            "bbox": {"x1": 100, "y1": 200, "x2": 500, "y2": 350},
-            "confidence": 0.95
-        },
-        {
-            "region_id": "reg_002",
-            "type": "formula",
-            "bbox": {"x1": 100, "y1": 360, "x2": 500, "y2": 420},
-            "confidence": 0.88
-        },
-        {
-            "region_id": "reg_003",
-            "type": "diagram",
-            "bbox": {"x1": 550, "y1": 200, "x2": 900, "y2": 600},
-            "confidence": 0.82
-        }
-    ]
+    image_path = _resolve_image_path(request.image_id)
+    regions = regions_to_dict(segment_image(image_path))
 
     return Response(
         code=200,
@@ -108,14 +99,8 @@ async def recognize_text(
     current_user: dict = Depends(get_current_user)
 ):
     """OCR 文字识别"""
-    text_regions = [
-        {
-            "region_id": "reg_001",
-            "text": "根据牛顿第二定律，F=ma，可知加速度",
-            "bbox": {"x1": 100, "y1": 200, "x2": 500, "y2": 350},
-            "confidence": 0.92
-        }
-    ]
+    image_path = _resolve_image_path(request.image_id)
+    text_regions = results_to_dict(cv_recognize_text(image_path))
 
     return Response(
         code=200,
@@ -136,7 +121,7 @@ async def recognize_formula(
 ):
     """公式识别"""
     # 调用AI识别模块，替换原有模拟代码
-    data = recognize_formula(image_id=request.image_id)
+    data = ai_recognize_formula(image_id=request.image_id)
 
     return Response(
         code=200,
