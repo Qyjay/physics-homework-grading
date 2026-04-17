@@ -11,7 +11,7 @@ from api.auth import get_current_user
 from ai.formula_recognizer import recognize_formula as ai_recognize_formula
 from cv.segmenter import segment_image, regions_to_dict
 from cv.ocr_engine import recognize_text as cv_recognize_text, results_to_dict
-
+from ..ai.formula_recognizer import recognize_formula as formula_recognizer, results_to_dict as formula_to_dict
 router = APIRouter()
 
 
@@ -114,20 +114,38 @@ async def recognize_text(
 
 
 
-@router.post("/formula", response_model=Response)
+@router.post("/formula", response_model=ResponseModel)
 async def recognize_formula(
-    request: FormulaRequest,
-    current_user: dict = Depends(get_current_user)
+    file: UploadFile = File(...),
+    regions: Optional[str] = Form(None)   # 假设 regions 以 JSON 字符串传递
 ):
-    """公式识别"""
-    # 调用AI识别模块，替换原有模拟代码
-    data = ai_recognize_formula(image_id=request.image_id)
+    """
+    公式识别接口
+    """
+    # 保存临时文件
+    temp_file = await save_upload_file_temporarily(file)
+    try:
+        # 解析 regions 参数（如果有）
+        region_list = None
+        if regions:
+            region_list = json.loads(regions)
 
-    return Response(
-        code=200,
-        message="识别完成",
-        data=data
-    )
+        # 调用真实的公式识别模块
+        results = formula_recognizer(temp_file, region_list)
+
+        # 转换为 API 响应格式
+        data = formula_to_dict(results)
+
+        return ResponseModel(
+            code=0,
+            message="success",
+            data=data
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # 清理临时文件
+        os.unlink(temp_file)
 
 
 
