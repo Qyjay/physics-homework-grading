@@ -44,6 +44,11 @@ const routes: RouteRecordRaw[] = [
         name: 'History',
         component: () => import('@/views/History.vue'),
       },
+      {
+        path: 'batch',
+        name: 'BatchUpload',
+        component: () => import('@/views/BatchUpload.vue'),
+      },
     ],
   },
 ]
